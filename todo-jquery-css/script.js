@@ -39,14 +39,17 @@ $(document).ready(function () {
     //-------------
     $(".context").dblclick(function () {
       var getVal = $(this).text();
-      var input = `<input class="form-control-edit" value=${getVal}>`;
+      console.log(getVal);
+      var input = `<input class="form-control-edit" value="${getVal}">`;
+
       $(this).text("");
       $(this).append(input);
       $(".form-control-edit").focus();
-      updatelocalstorage();
+
       $(".form-control-edit").blur(function () {
         var val = $(this).val();
-        if (val != "") {
+        console.log(val);
+        if (val.trim() != "") {
           $(this).parent(".list-group-item .context").text(val);
         } else {
           $(this).parent(".list-group-item .context").text(getVal);
@@ -92,6 +95,12 @@ $(document).ready(function () {
       return getlist.done == false;
     });
     $("#zero").text(somethingunique.length);
+
+    if (somethingunique.length == "0") {
+      $("#checkAll").text("Uncheck All");
+    } else {
+      $("#checkAll").text("Check All");
+    }
 
     localStorage.setItem("todos", JSON.stringify(todos));
   }
@@ -149,18 +158,23 @@ $(document).ready(function () {
   $("#checkAll").click("click", function () {
     if ($("#checkAll").text().trim() == "Check All") {
       var getlists = $(".list-group-item");
-      if (!getlists.hasClass("del")) {
-        getlists.addClass("del");
-      }
-      getlists.children().prop("checked", true);
+      getlists.each(function () {
+        if (!$(this).hasClass("del")) {
+          $(this).addClass("del");
+        }
+        $(this).children().prop("checked", true);
+      });
       $("#checkAll").text("Uncheck All");
       updatelocalstorage();
     } else {
       var getlists = $(".list-group-item");
-      if (getlists.hasClass("del")) {
-        getlists.removeClass("del");
-      }
-      getlists.children().prop("checked", false);
+      getlists.each(function () {
+        if ($(this).has(".del")) {
+          $(this).removeClass("del");
+        }
+        $(this).children().prop("checked", false);
+      });
+
       $("#checkAll").text("Check All");
       updatelocalstorage();
     }
